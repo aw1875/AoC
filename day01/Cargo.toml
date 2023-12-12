@@ -1,5 +1,5 @@
 [package]
-name = "day3"
+name = "day01"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 pcre2 = "0.2.6"
+regex = "1.10.2"
