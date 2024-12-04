@@ -4,6 +4,7 @@ const std = @import("std");
 const day01 = @import("day01/src/main.zig");
 const day02 = @import("day02/src/main.zig");
 const day03 = @import("day03/src/main.zig");
+const day04 = @import("day04/src/main.zig");
 
 const Command = enum {
     run,
@@ -14,12 +15,14 @@ const Day = enum {
     day01,
     day02,
     day03,
+    day04,
 
     pub fn run(self: Day) !void {
         switch (self) {
             Day.day01 => try day01.main(),
             Day.day02 => try day02.main(),
             Day.day03 => try day03.main(),
+            Day.day04 => try day04.main(),
         }
     }
 
@@ -28,6 +31,7 @@ const Day = enum {
             Day.day01 => try day01.runTests(allocator),
             Day.day02 => try day02.runTests(allocator),
             Day.day03 => try day03.runTests(allocator),
+            Day.day04 => try day04.runTests(allocator),
         }
 
         std.debug.print("All tests passed\n", .{});
