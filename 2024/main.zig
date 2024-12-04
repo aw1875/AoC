@@ -19,19 +19,19 @@ const Day = enum {
 
     pub fn run(self: Day) !void {
         switch (self) {
-            Day.day01 => try day01.main(),
-            Day.day02 => try day02.main(),
-            Day.day03 => try day03.main(),
-            Day.day04 => try day04.main(),
+            .day01 => try day01.main(),
+            .day02 => try day02.main(),
+            .day03 => try day03.main(),
+            .day04 => try day04.main(),
         }
     }
 
     pub fn @"test"(self: Day, allocator: std.mem.Allocator) !void {
         switch (self) {
-            Day.day01 => try day01.runTests(allocator),
-            Day.day02 => try day02.runTests(allocator),
-            Day.day03 => try day03.runTests(allocator),
-            Day.day04 => try day04.runTests(allocator),
+            .day01 => try day01.runTests(allocator),
+            .day02 => try day02.runTests(allocator),
+            .day03 => try day03.runTests(allocator),
+            .day04 => try day04.runTests(allocator),
         }
 
         std.debug.print("All tests passed\n", .{});
@@ -60,9 +60,9 @@ pub fn main() !void {
         std.process.exit(1);
     }
 
-    if (command == Command.run) {
+    if (command == .run) {
         try day.?.run();
-    } else if (command == Command.@"test") {
+    } else if (command == .@"test") {
         try day.?.@"test"(allocator);
     }
 }
