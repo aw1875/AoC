@@ -3,8 +3,7 @@ const common = @import("../../common.zig");
 const utils = @import("utils.zig");
 
 fn twoOpsCalculations(allocator: std.mem.Allocator, input: []const u8) !usize {
-    var results = std.ArrayList(usize).init(allocator);
-    defer results.deinit();
+    var total: usize = 0;
 
     var lines = std.mem.splitSequence(u8, input, "\n");
     while (lines.next()) |line| {
@@ -15,21 +14,15 @@ fn twoOpsCalculations(allocator: std.mem.Allocator, input: []const u8) !usize {
         defer allocator.free(numbers);
 
         if (utils.isValid2Ops(target, numbers[0], numbers[1..])) {
-            try results.append(target);
+            total += target;
         }
-    }
-
-    var total: usize = 0;
-    for (results.items) |result| {
-        total += result;
     }
 
     return total;
 }
 
 fn threeOpsCalculations(allocator: std.mem.Allocator, input: []const u8) !usize {
-    var results = std.ArrayList(usize).init(allocator);
-    defer results.deinit();
+    var total: usize = 0;
 
     var lines = std.mem.splitSequence(u8, input, "\n");
     while (lines.next()) |line| {
@@ -40,13 +33,8 @@ fn threeOpsCalculations(allocator: std.mem.Allocator, input: []const u8) !usize 
         defer allocator.free(numbers);
 
         if (utils.isValid3Ops(target, numbers[0], numbers[1..])) {
-            try results.append(target);
+            total += target;
         }
-    }
-
-    var total: usize = 0;
-    for (results.items) |result| {
-        total += result;
     }
 
     return total;
