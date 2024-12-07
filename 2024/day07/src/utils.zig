@@ -28,8 +28,7 @@ pub fn isValid2Ops(target: usize, current: usize, numbers: []usize) bool {
 
 // using string concats and then parsing them back took insanely long
 fn concat(a: usize, b: usize) usize {
-    const digits = if (b == 0) 1 else @floor(@log10(@as(f64, @floatFromInt(b)))) + 1;
-    return a * std.math.pow(usize, 10, @intFromFloat(digits)) + b;
+    return a * std.math.pow(usize, 10, if (b == 0) 1 else std.math.log10_int(b) + 1) + b;
 }
 
 pub fn isValid3Ops(target: usize, current: usize, numbers: []usize) bool {
