@@ -65,7 +65,6 @@ fn testExample1(allocator: std.mem.Allocator) !void {
     defer allocator.free(input);
 
     const twoOps = try twoOpsCalculations(allocator, input);
-
     try std.testing.expectEqual(3749, twoOps);
 }
 
@@ -74,6 +73,5 @@ fn testExample2(allocator: std.mem.Allocator) !void {
     defer allocator.free(input);
 
     const threeOps = try threeOpsCalculations(allocator, input);
-
     try std.testing.expectEqual(11387, threeOps);
 }

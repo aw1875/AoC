@@ -51,7 +51,6 @@ fn testExample1(allocator: std.mem.Allocator) !void {
     defer allocator.free(input);
 
     const p1, _ = try findPaths(allocator, input);
-
     try std.testing.expectEqual(41, p1);
 }
 
@@ -60,6 +59,5 @@ fn testExample2(allocator: std.mem.Allocator) !void {
     defer allocator.free(input);
 
     _, const p2 = try findPaths(allocator, input);
-
     try std.testing.expectEqual(6, p2);
 }

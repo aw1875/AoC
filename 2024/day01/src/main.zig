@@ -71,7 +71,6 @@ fn testExample1(allocator: std.mem.Allocator) !void {
     defer spots.deinit(allocator);
 
     const total_distance = try calculateDistance(spots.first_spots_array, spots.second_spots_array);
-
     try std.testing.expectEqual(11, total_distance);
 }
 
@@ -83,6 +82,5 @@ fn testExample2(allocator: std.mem.Allocator) !void {
     defer spots.deinit(allocator);
 
     const simularity_score = try calculateSimilarityScore(allocator, spots);
-
     try std.testing.expectEqual(31, simularity_score);
 }

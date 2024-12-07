@@ -57,8 +57,8 @@ fn testExample1(allocator: std.mem.Allocator) !void {
     defer allocator.free(input);
 
     const ordering, const updates = utils.splitOnceBy(u8, input, "\n\n");
-    const middle_pages = try correctMiddlePages(allocator, ordering, updates);
 
+    const middle_pages = try correctMiddlePages(allocator, ordering, updates);
     try std.testing.expectEqual(143, middle_pages);
 }
 
@@ -67,7 +67,7 @@ fn testExample2(allocator: std.mem.Allocator) !void {
     defer allocator.free(input);
 
     const ordering, const updates = utils.splitOnceBy(u8, input, "\n\n");
-    const middle_pages = try incorrectMiddlePages(allocator, ordering, updates);
 
+    const middle_pages = try incorrectMiddlePages(allocator, ordering, updates);
     try std.testing.expectEqual(123, middle_pages);
 }
