@@ -10,10 +10,12 @@ const day06 = @import("day06/src/main.zig");
 const day07 = @import("day07/src/main.zig");
 const day08 = @import("day08/src/main.zig");
 const day09 = @import("day09/src/main.zig");
+const day10 = @import("day10/src/main.zig");
 
 const Command = enum {
     run,
     @"test",
+    testall,
 };
 
 const Day = enum {
@@ -26,6 +28,7 @@ const Day = enum {
     day07,
     day08,
     day09,
+    day10,
 
     pub fn run(self: Day) !void {
         switch (self) {
@@ -38,6 +41,7 @@ const Day = enum {
             .day07 => try day07.main(),
             .day08 => try day08.main(),
             .day09 => try day09.main(),
+            .day10 => try day10.main(),
         }
     }
 
@@ -52,6 +56,7 @@ const Day = enum {
             .day07 => try day07.runTests(allocator),
             .day08 => try day08.runTests(allocator),
             .day09 => try day09.runTests(allocator),
+            .day10 => try day10.runTests(allocator),
         }
 
         std.debug.print("All tests passed\n", .{});
@@ -66,6 +71,15 @@ pub fn main() !void {
 
     const args = try std.process.argsAlloc(allocator);
     defer std.process.argsFree(allocator, args);
+
+    if (std.mem.eql(u8, args[1], "testall")) {
+        inline for (@typeInfo(Day).Enum.fields) |d| {
+            const current_day: Day = @enumFromInt(d.value);
+            try current_day.@"test"(allocator);
+        }
+
+        return;
+    }
 
     if (args.len < 3) {
         std.debug.print("Usage: {s} <run|test> <day number>\nExample: {s} run day01\n", .{ args[0], args[0] });

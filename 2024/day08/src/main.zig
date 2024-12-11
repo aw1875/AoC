@@ -3,8 +3,8 @@ const common = @import("../../common.zig");
 
 const utils = @import("utils.zig");
 
-const Coord = @import("coord.zig");
-const Grid = @import("grid.zig").Grid;
+const Coord = common.Coord;
+const Grid = common.Grid;
 
 fn getTotalAntinodes(allocator: std.mem.Allocator, grid: *Grid(u8), is_part_2: bool) !usize {
     var antennas = std.AutoHashMap(u8, std.ArrayList(Coord)).init(allocator);
