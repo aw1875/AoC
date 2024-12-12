@@ -75,6 +75,10 @@ pub fn main() !void {
 
     const args = try std.process.argsAlloc(allocator);
     defer std.process.argsFree(allocator, args);
+    if (args.len < 2) {
+        std.debug.print("Usage: {s} <run|test|testall> <day number>\nExample: {s} run day01\n", .{ args[0], args[0] });
+        std.process.exit(1);
+    }
 
     if (std.mem.eql(u8, args[1], "testall")) {
         inline for (@typeInfo(Day).Enum.fields) |d| {
