@@ -91,3 +91,144 @@ pub fn Grid(comptime T: type) type {
         }
     };
 }
+
+pub fn Graph(comptime T: type) type {
+    return struct {
+        const GraphStruct = @This();
+        const Edge = struct { coord: Coord, direction: u8 };
+
+        allocator: std.mem.Allocator,
+        rows: usize,
+        cols: usize,
+        grid: std.AutoHashMap(Coord, T),
+
+        pub fn init(allocator: std.mem.Allocator, input: []const u8) !GraphStruct {
+            var grid = std.AutoHashMap(Coord, T).init(allocator);
+
+            var rows: usize = 0;
+            var cols: usize = 0;
+
+            var lines = std.mem.splitSequence(u8, input, "\n");
+            while (lines.next()) |line| : (rows += 1) {
+                cols = @max(cols, line.len);
+
+                for (line, 0..) |c, i| {
+                    try grid.put(Coord.init(i, rows), c);
+                }
+            }
+
+            return GraphStruct{
+                .allocator = allocator,
+                .rows = rows,
+                .cols = cols,
+                .grid = grid,
+            };
+        }
+
+        pub fn deinit(self: *GraphStruct) void {
+            self.grid.deinit();
+        }
+
+        pub fn exploreRegion(self: *GraphStruct, start: Coord, region: T, scanned: *std.AutoHashMap(Coord, void)) !struct { usize, usize, usize } {
+            var queue = std.ArrayList(Coord).init(self.allocator);
+            defer queue.deinit();
+
+            var edges = std.ArrayList(Edge).init(self.allocator);
+            defer edges.deinit();
+
+            try queue.append(start);
+            var area: usize = 0;
+            var perimeter: usize = 0;
+
+            while (queue.items.len > 0) {
+                const edge_count = edges.items.len;
+                area += try self.exploreNext(region, &queue, &edges, scanned);
+                perimeter += edges.items.len - edge_count;
+            }
+
+            return .{ area, perimeter, try self.checkEdges(&edges) };
+        }
+
+        fn exploreNext(
+            self: *GraphStruct,
+            region: u8,
+            queue: *std.ArrayList(Coord),
+            edges: *std.ArrayList(Edge),
+            scanned: *std.AutoHashMap(Coord, void),
+        ) !usize {
+            const coord = queue.popOrNull() orelse return 0;
+            if (scanned.contains(coord)) return 0;
+
+            try scanned.put(coord, {});
+
+            try self.checkNeighbor(region, coord, 1, 0, queue, edges, '>', scanned);
+            try self.checkNeighbor(region, coord, -1, 0, queue, edges, '<', scanned);
+            try self.checkNeighbor(region, coord, 0, 1, queue, edges, 'v', scanned);
+            try self.checkNeighbor(region, coord, 0, -1, queue, edges, '^', scanned);
+
+            return 1;
+        }
+
+        fn checkNeighbor(
+            self: *GraphStruct,
+            region: u8,
+            coord: Coord,
+            dx: isize,
+            dy: isize,
+            queue: *std.ArrayList(Coord),
+            edges: *std.ArrayList(Edge),
+            direction: u8,
+            scanned: *std.AutoHashMap(Coord, void),
+        ) !void {
+            const neighbor_coord = Coord{ .x = coord.x + dx, .y = coord.y + dy };
+
+            const neighbor = self.grid.get(neighbor_coord) orelse {
+                try edges.append(Edge{ .coord = coord, .direction = direction });
+                return;
+            };
+
+            if (neighbor != region) {
+                try edges.append(Edge{ .coord = coord, .direction = direction });
+                return;
+            }
+
+            if (!scanned.contains(neighbor_coord)) try queue.append(neighbor_coord);
+        }
+
+        fn checkEdges(self: *GraphStruct, edges: *std.ArrayList(Edge)) !usize {
+            var sides = std.AutoHashMap(Edge, void).init(self.allocator);
+            defer sides.deinit();
+
+            for (edges.items) |edge| {
+                try sides.put(edge, {});
+            }
+
+            for (edges.items) |edge| {
+                if (!sides.contains(edge)) continue;
+
+                if (edge.direction == '^' or edge.direction == 'v') {
+                    self.pruneEdges(edge, -1, 0, &sides);
+                    self.pruneEdges(edge, 1, 0, &sides);
+                } else {
+                    self.pruneEdges(edge, 0, -1, &sides);
+                    self.pruneEdges(edge, 0, 1, &sides);
+                }
+            }
+
+            return sides.count();
+        }
+
+        fn pruneEdges(_: *GraphStruct, edge: Edge, dx: isize, dy: isize, sides: *std.AutoHashMap(Edge, void)) void {
+            var x = edge.coord.x + dx;
+            var y = edge.coord.y + dy;
+            var current = Edge{ .coord = Coord{ .x = x, .y = y }, .direction = edge.direction };
+
+            while (sides.contains(current)) {
+                _ = sides.remove(current);
+                x += dx;
+                y += dy;
+                current = Edge{ .coord = Coord{ .x = x, .y = y }, .direction = edge.direction };
+            }
+        }
+    };
+}
